@@ -8,7 +8,7 @@
 /*|-----------------------------------------------------------|*/
 
 #include <WiFi.h>
-#include <WiFiClientSecure.h>
+#include <SSLClient.h>
 #include "esp_wpa2.h"
 #include <Wire.h>
 #define EAP_ANONYMOUS_IDENTITY "anonymous@example.com" //anonymous identity
@@ -49,7 +49,8 @@ const char* test_root_ca = \
 // You can use x.509 client certificates if you want
 //const char* test_client_key = "";   //to verify the client
 //const char* test_client_cert = "";  //to verify the client
-WiFiClientSecure client;
+WiFiClient wificlient;
+SSLClient  client(wificlient);
 void setup() {
   Serial.begin(115200);
   delay(10);

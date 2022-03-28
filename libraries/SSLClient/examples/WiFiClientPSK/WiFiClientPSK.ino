@@ -10,7 +10,8 @@
   2018 - Adapted for PSK by Thorsten von Eicken
 */
 
-#include <WiFiClientSecure.h>
+#include <WiFi.h>
+#include <SSLClient.h>
 
 #if 0
 const char* ssid     = "your-ssid";     // your network SSID (name of wifi network)
@@ -27,7 +28,8 @@ const int    port = 8443; // server's port (8883 for MQTT)
 const char*  pskIdent = "Client_identity"; // PSK identity (sometimes called key hint)
 const char*  psKey = "1a2b3c4d"; // PSK Key (must be hex string without 0x)
 
-WiFiClientSecure client;
+WiFiClient wificlient;
+SSLClient  client(wificlient);
 
 void setup() {
   //Initialize serial and wait for port to open:

@@ -1,11 +1,13 @@
-#include <WiFiClientSecure.h>
+#include <WiFi.h>
+#include <SSLClient.h>
 
 const char* ssid     = "your-ssid";     // your network SSID (name of wifi network)
 const char* password = "your-password"; // your network password
 
 const char*  server = "www.howsmyssl.com";  // Server URL
 
-WiFiClientSecure client;
+WiFiClient wificlient;
+SSLClient  client(wificlient);
 
 void setup() {
   //Initialize serial and wait for port to open:

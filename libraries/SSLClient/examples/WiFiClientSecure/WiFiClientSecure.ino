@@ -6,7 +6,8 @@
   2017 - Evandro Copercini - Apache 2.0 License.
 */
 
-#include <WiFiClientSecure.h>
+#include <WiFi.h>
+#include <SSLClient.h>
 
 const char* ssid     = "your-ssid";     // your network SSID (name of wifi network)
 const char* password = "your-password"; // your network password
@@ -44,7 +45,8 @@ const char* test_root_ca= \
 //const char* test_client_cert = "";  //to verify the client
 
 
-WiFiClientSecure client;
+WiFiClient wificlient;
+SSLClient  client(wificlient);
 
 void setup() {
   //Initialize serial and wait for port to open:
