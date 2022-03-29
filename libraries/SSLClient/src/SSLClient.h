@@ -80,7 +80,7 @@ public:
     void setHandshakeTimeout(unsigned long handshake_timeout);
     void setAlpnProtocols(const char **alpn_protos);
     const mbedtls_x509_crt* getPeerCertificate() { return mbedtls_ssl_get_peer_cert(&sslclient->ssl_ctx); };
-    bool getFingerprintSHA256(uint8_t sha256_result[32]) { return get_peer_fingerprint(sslclient, sha256_result); };
+    bool getFingerprintSHA256(uint8_t sha256_result[32]) { return get_peer_fingerprint_2(sslclient, sha256_result); };
     int setTimeout(uint32_t seconds){ return 0; }
 
     operator bool()

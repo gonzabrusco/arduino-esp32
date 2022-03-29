@@ -143,7 +143,7 @@ int start_ssl_client_2(sslclient_context_2 *ssl_client, const char *host, uint32
         }
     } else if (useRootCABundle) {
         log_v("Attaching root CA cert bundle");
-        ret = esp_crt_bundle_attach(&ssl_client->ssl_conf);
+        ret = esp_crt_bundle_attach_2(&ssl_client->ssl_conf);
 
         if (ret < 0) {
             return handle_error(ret);
