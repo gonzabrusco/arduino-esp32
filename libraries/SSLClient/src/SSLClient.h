@@ -24,12 +24,12 @@
 
 #include "Arduino.h"
 #include "IPAddress.h"
-#include "ssl_client.h"
+#include "ssl_client_2.h"
 
 class SSLClient : public Client
 {
 protected:
-    sslclient_context *sslclient;
+    sslclient_context_2 *sslclient;
 
     int _lastError = 0;
     int _peek = -1;

@@ -20,7 +20,7 @@
 */
 
 #include "SSLClient.h"
-#include "esp_crt_bundle.h"
+#include "esp_crt_bundle_2.h"
 #include <errno.h>
 
 #undef connect
@@ -32,7 +32,7 @@ SSLClient::SSLClient()
 {
     _connected = false;
 
-    sslclient = new sslclient_context;
+    sslclient = new sslclient_context_2;
     ssl_init(sslclient);
     sslclient->client = nullptr;
     sslclient->handshake_timeout = 120000;
@@ -53,7 +53,7 @@ SSLClient::SSLClient(Client& client)
     _connected = false;
     _timeout = 0;
 
-    sslclient = new sslclient_context;
+    sslclient = new sslclient_context_2;
     ssl_init(sslclient);
     sslclient->client = &client;
     sslclient->handshake_timeout = 120000;

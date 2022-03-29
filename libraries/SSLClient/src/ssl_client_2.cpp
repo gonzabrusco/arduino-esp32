@@ -17,8 +17,8 @@
 #include <mbedtls/oid.h>
 #include <algorithm>
 #include <string>
-#include "ssl_client.h"
-#include "esp_crt_bundle.h"
+#include "ssl_client_2.h"
+#include "esp_crt_bundle_2.h"
 
 #if !defined(MBEDTLS_KEY_EXCHANGE__SOME__PSK_ENABLED) && !defined(MBEDTLS_KEY_EXCHANGE_SOME_PSK_ENABLED)
 #  warning "Please configure IDF framework to include mbedTLS -> Enable pre-shared-key ciphersuites and activate at least one cipher"
@@ -26,7 +26,7 @@
 
 const char *pers = "esp32-tls";
 
-static int _handle_error(int err, const char * function, int line)
+static int _handle_error_2(int err, const char * function, int line)
 {
     if(err == -30848){
         return err;
@@ -41,9 +41,9 @@ static int _handle_error(int err, const char * function, int line)
     return err;
 }
 
-#define handle_error(e) _handle_error(e, __FUNCTION__, __LINE__)
+#define handle_error(e) _handle_error_2(e, __FUNCTION__, __LINE__)
 
-static int client_recv_timeout(void *ctx, unsigned char *buf, size_t len, uint32_t timeout )
+static int client_recv_timeout_2(void *ctx, unsigned char *buf, size_t len, uint32_t timeout )
 {
     Client *client = reinterpret_cast<Client *>(ctx);
 
@@ -61,13 +61,13 @@ static int client_recv_timeout(void *ctx, unsigned char *buf, size_t len, uint32
     return (res == 0) ? MBEDTLS_ERR_SSL_WANT_READ : res;
 }
 
-static int client_send(void *ctx, const unsigned char *buf, size_t len ) {
+static int client_send_2(void *ctx, const unsigned char *buf, size_t len ) {
     Client *client = reinterpret_cast<Client *>(ctx);
 
     return client->write(buf, len);
 }
 
-void ssl_init(sslclient_context *ssl_client)
+void ssl_init_2(sslclient_context *ssl_client)
 {
     // reset embedded pointers to zero
     memset(ssl_client, 0, sizeof(sslclient_context));
@@ -76,7 +76,7 @@ void ssl_init(sslclient_context *ssl_client)
     mbedtls_ctr_drbg_init(&ssl_client->drbg_ctx);
 }
 
-int start_ssl_client(sslclient_context *ssl_client, const char *host, uint32_t port, int timeout, const char *rootCABuff, bool useRootCABundle, const char *cli_cert, const char *cli_key, const char *pskIdent, const char *psKey, bool insecure, const char **alpn_protos)
+int start_ssl_client_2(sslclient_context *ssl_client, const char *host, uint32_t port, int timeout, const char *rootCABuff, bool useRootCABundle, const char *cli_cert, const char *cli_key, const char *pskIdent, const char *psKey, bool insecure, const char **alpn_protos)
 {
     char buf[512];
     int ret, flags;
@@ -219,7 +219,7 @@ int start_ssl_client(sslclient_context *ssl_client, const char *host, uint32_t p
         return handle_error(ret);
     }
 
-    mbedtls_ssl_set_bio(&ssl_client->ssl_ctx, ssl_client->client, client_send, NULL, client_recv_timeout);
+    mbedtls_ssl_set_bio(&ssl_client->ssl_ctx, ssl_client->client, client_send_2, NULL, client_recv_timeout_2);
 
     log_v("Performing the SSL/TLS handshake...");
     unsigned long handshake_start_time=millis();
@@ -271,7 +271,7 @@ int start_ssl_client(sslclient_context *ssl_client, const char *host, uint32_t p
 }
 
 
-void stop_ssl_socket(sslclient_context *ssl_client, const char *rootCABuff, const char *cli_cert, const char *cli_key)
+void stop_ssl_socket_2(sslclient_context *ssl_client, const char *rootCABuff, const char *cli_cert, const char *cli_key)
 {
     log_v("Cleaning SSL connection.");
 
@@ -299,7 +299,7 @@ void stop_ssl_socket(sslclient_context *ssl_client, const char *rootCABuff, cons
 }
 
 
-int data_to_read(sslclient_context *ssl_client)
+int data_to_read_2(sslclient_context *ssl_client)
 {
     int ret, res;
     ret = mbedtls_ssl_read(&ssl_client->ssl_ctx, NULL, 0);
@@ -313,7 +313,7 @@ int data_to_read(sslclient_context *ssl_client)
     return res;
 }
 
-int send_ssl_data(sslclient_context *ssl_client, const uint8_t *data, size_t len)
+int send_ssl_data_2(sslclient_context *ssl_client, const uint8_t *data, size_t len)
 {
     log_v("Writing HTTP request with %d bytes...", len); //for low level debug
     int ret = -1;
@@ -330,7 +330,7 @@ int send_ssl_data(sslclient_context *ssl_client, const uint8_t *data, size_t len
     return ret;
 }
 
-int get_ssl_receive(sslclient_context *ssl_client, uint8_t *data, int length)
+int get_ssl_receive_2(sslclient_context *ssl_client, uint8_t *data, int length)
 {
     //log_d( "Reading HTTP response...");   //for low level debug
     int ret = -1;
@@ -341,7 +341,7 @@ int get_ssl_receive(sslclient_context *ssl_client, uint8_t *data, int length)
     return ret;
 }
 
-static bool parseHexNibble(char pb, uint8_t* res)
+static bool parseHexNibble_2(char pb, uint8_t* res)
 {
     if (pb >= '0' && pb <= '9') {
         *res = (uint8_t) (pb - '0'); return true;
@@ -354,7 +354,7 @@ static bool parseHexNibble(char pb, uint8_t* res)
 }
 
 // Compare a name from certificate and domain name, return true if they match
-static bool matchName(const std::string& name, const std::string& domainName)
+static bool matchName_2(const std::string& name, const std::string& domainName)
 {
     size_t wildcardPos = name.find('*');
     if (wildcardPos == std::string::npos) {
@@ -381,7 +381,7 @@ static bool matchName(const std::string& name, const std::string& domainName)
 }
 
 // Verifies certificate provided by the peer to match specified SHA256 fingerprint
-bool verify_ssl_fingerprint(sslclient_context *ssl_client, const char* fp, const char* domain_name)
+bool verify_ssl_fingerprint_2(sslclient_context *ssl_client, const char* fp, const char* domain_name)
 {
     // Convert hex string to byte array
     uint8_t fingerprint_local[32];
@@ -396,7 +396,7 @@ bool verify_ssl_fingerprint(sslclient_context *ssl_client, const char* fp, const
             return false;
         }
         uint8_t high, low;
-        if (!parseHexNibble(fp[pos], &high) || !parseHexNibble(fp[pos+1], &low)) {
+        if (!parseHexNibble_2(fp[pos], &high) || !parseHexNibble_2(fp[pos+1], &low)) {
             log_d("pos:%d len:%d invalid hex sequence: %c%c", pos, len, fp[pos], fp[pos+1]);
             return false;
         }
@@ -406,7 +406,7 @@ bool verify_ssl_fingerprint(sslclient_context *ssl_client, const char* fp, const
 
     // Calculate certificate's SHA256 fingerprint
     uint8_t fingerprint_remote[32];
-    if(!get_peer_fingerprint(ssl_client, fingerprint_remote))
+    if(!get_peer_fingerprint_2(ssl_client, fingerprint_remote))
         return false;
 
     // Check if fingerprints match
@@ -418,12 +418,12 @@ bool verify_ssl_fingerprint(sslclient_context *ssl_client, const char* fp, const
 
     // Additionally check if certificate has domain name if provided
     if (domain_name)
-        return verify_ssl_dn(ssl_client, domain_name);
+        return verify_ssl_dn_2(ssl_client, domain_name);
     else
         return true;
 }
 
-bool get_peer_fingerprint(sslclient_context *ssl_client, uint8_t sha256[32])
+bool get_peer_fingerprint_2(sslclient_context *ssl_client, uint8_t sha256[32])
 {
     if (!ssl_client) {
         log_d("Invalid ssl_client pointer");
@@ -446,7 +446,7 @@ bool get_peer_fingerprint(sslclient_context *ssl_client, uint8_t sha256[32])
 }
 
 // Checks if peer certificate has specified domain in CN or SANs
-bool verify_ssl_dn(sslclient_context *ssl_client, const char* domain_name)
+bool verify_ssl_dn_2(sslclient_context *ssl_client, const char* domain_name)
 {
     log_d("domain name: '%s'", (domain_name)?domain_name:"(null)");
     std::string domain_name_str(domain_name);
@@ -462,7 +462,7 @@ bool verify_ssl_dn(sslclient_context *ssl_client, const char* domain_name)
         std::string san_str((const char*)san->buf.p, san->buf.len);
         std::transform(san_str.begin(), san_str.end(), san_str.begin(), ::tolower);
 
-        if (matchName(san_str, domain_name_str))
+        if (matchName_2(san_str, domain_name_str))
             return true;
 
         log_d("SAN '%s': no match", san_str.c_str());
@@ -480,7 +480,7 @@ bool verify_ssl_dn(sslclient_context *ssl_client, const char* domain_name)
         {
             std::string common_name_str((const char*)common_name->val.p, common_name->val.len);
 
-            if (matchName(common_name_str, domain_name_str))
+            if (matchName_2(common_name_str, domain_name_str))
                 return true;
 
             log_d("CN '%s': not match", common_name_str.c_str());

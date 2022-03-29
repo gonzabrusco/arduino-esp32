@@ -13,8 +13,8 @@
 // limitations under the License.
 
 
-#ifndef _ESP_CRT_BUNDLE_H_
-#define _ESP_CRT_BUNDLE_H_
+#ifndef _ESP_CRT_BUNDLE_H_2
+#define _ESP_CRT_BUNDLE_H_2
 
 #include "mbedtls/ssl.h"
 
@@ -27,7 +27,7 @@ extern "C" {
  * @brief      Attach and enable use of a bundle for certificate verification
  *
  * Attach and enable use of a bundle for certificate verification through a verification callback.
- * If no specific bundle has been set through esp_crt_bundle_set() it will default to the
+ * If no specific bundle has been set through esp_crt_bundle_set_2() it will default to the
  * bundle defined in menuconfig and embedded in the binary.
  *
  * @param[in]  conf      The config struct for the SSL connection.
@@ -36,7 +36,7 @@ extern "C" {
  *             - ESP_OK  if adding certificates was successful.
  *             - Other   if an error occured or an action must be taken by the calling process.
  */
-esp_err_t esp_crt_bundle_attach(void *conf);
+esp_err_t esp_crt_bundle_attach_2(void *conf);
 
 
 /**
@@ -46,7 +46,7 @@ esp_err_t esp_crt_bundle_attach(void *conf);
  *
  * @param[in]  conf      The config struct for the SSL connection.
  */
-void esp_crt_bundle_detach(mbedtls_ssl_config *conf);
+void esp_crt_bundle_detach_2(mbedtls_ssl_config *conf);
 
 
 /**
@@ -58,7 +58,7 @@ void esp_crt_bundle_detach(mbedtls_ssl_config *conf);
  *
  * @param[in]  x509_bundle     A pointer to the certificate bundle.
  */
-void esp_crt_bundle_set(const uint8_t *x509_bundle);
+void esp_crt_bundle_set_2(const uint8_t *x509_bundle);
 
 
 #ifdef __cplusplus
