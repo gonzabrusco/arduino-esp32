@@ -33,7 +33,7 @@ SSLClient::SSLClient()
     _connected = false;
 
     sslclient = new sslclient_context_2;
-    ssl_init(sslclient);
+    ssl_init_2(sslclient);
     sslclient->client = nullptr;
     sslclient->handshake_timeout = 120000;
     _use_insecure = false;
@@ -54,7 +54,7 @@ SSLClient::SSLClient(Client& client)
     _timeout = 0;
 
     sslclient = new sslclient_context_2;
-    ssl_init(sslclient);
+    ssl_init_2(sslclient);
     sslclient->client = &client;
     sslclient->handshake_timeout = 120000;
 
@@ -86,7 +86,7 @@ void SSLClient::stop()
     if (sslclient->client != nullptr) {
         _connected = false;
         _peek = -1;
-        stop_ssl_socket(sslclient, _CA_cert, _cert, _private_key);
+        stop_ssl_socket_2(sslclient, _CA_cert, _cert, _private_key);
     }
 }
 
@@ -124,10 +124,10 @@ int SSLClient::connect(const char *host, uint16_t port, const char *CA_cert, con
     if(_timeout > 0){
         sslclient->handshake_timeout = _timeout;
     }
-    int ret = start_ssl_client(sslclient, host, port, _timeout, CA_cert, _use_ca_bundle, cert, private_key, NULL, NULL, _use_insecure, _alpn_protos);
+    int ret = start_ssl_client_2(sslclient, host, port, _timeout, CA_cert, _use_ca_bundle, cert, private_key, NULL, NULL, _use_insecure, _alpn_protos);
     _lastError = ret;
     if (ret < 0) {
-        log_e("start_ssl_client: %d", ret);
+        log_e("start_ssl_client_2: %d", ret);
         stop();
         return 0;
     }
@@ -140,14 +140,14 @@ int SSLClient::connect(IPAddress ip, uint16_t port, const char *pskIdent, const 
 }
 
 int SSLClient::connect(const char *host, uint16_t port, const char *pskIdent, const char *psKey) {
-    log_v("start_ssl_client with PSK");
+    log_v("start_ssl_client_2 with PSK");
     if(_timeout > 0){
         sslclient->handshake_timeout = _timeout;
     }
-    int ret = start_ssl_client(sslclient, host, port, _timeout, NULL, false, NULL, NULL, pskIdent, psKey, _use_insecure, _alpn_protos);
+    int ret = start_ssl_client_2(sslclient, host, port, _timeout, NULL, false, NULL, NULL, pskIdent, psKey, _use_insecure, _alpn_protos);
     _lastError = ret;
     if (ret < 0) {
-        log_e("start_ssl_client: %d", ret);
+        log_e("start_ssl_client_2: %d", ret);
         stop();
         return 0;
     }
@@ -184,7 +184,7 @@ size_t SSLClient::write(const uint8_t *buf, size_t size)
     if (!_connected) {
         return 0;
     }
-    int res = send_ssl_data(sslclient, buf, size);
+    int res = send_ssl_data_2(sslclient, buf, size);
     if (res < 0) {
         stop();
         res = 0;
@@ -214,7 +214,7 @@ int SSLClient::read(uint8_t *buf, size_t size)
         peeked = 1;
     }
 
-    int res = get_ssl_receive(sslclient, buf, size);
+    int res = get_ssl_receive_2(sslclient, buf, size);
     if (res < 0) {
         stop();
         return peeked?peeked:res;
@@ -228,7 +228,7 @@ int SSLClient::available()
     if (!_connected) {
         return peeked;
     }
-    int res = data_to_read(sslclient);
+    int res = data_to_read_2(sslclient);
     if (res < 0) {
         stop();
         return peeked?peeked:res;
@@ -263,10 +263,10 @@ void SSLClient::setCACert(const char *rootCA)
  {
     if (bundle != NULL)
     {
-        esp_crt_bundle_set(bundle);
+        esp_crt_bundle_set_2(bundle);
         _use_ca_bundle = true;
     } else {
-        esp_crt_bundle_detach(NULL);
+        esp_crt_bundle_detach_2(NULL);
         _use_ca_bundle = false;
     }
  }
@@ -291,7 +291,7 @@ bool SSLClient::verify(const char* fp, const char* domain_name)
     if (!sslclient)
         return false;
 
-    return verify_ssl_fingerprint(sslclient, fp, domain_name);
+    return verify_ssl_fingerprint_2(sslclient, fp, domain_name);
 }
 
 char *SSLClient::_streamLoad(Stream& stream, size_t size) {
