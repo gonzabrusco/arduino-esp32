@@ -67,16 +67,16 @@ static int client_send_2(void *ctx, const unsigned char *buf, size_t len ) {
     return client->write(buf, len);
 }
 
-void ssl_init_2(sslclient_context *ssl_client)
+void ssl_init_2(sslclient_context_2 *ssl_client)
 {
     // reset embedded pointers to zero
-    memset(ssl_client, 0, sizeof(sslclient_context));
+    memset(ssl_client, 0, sizeof(sslclient_context_2));
     mbedtls_ssl_init(&ssl_client->ssl_ctx);
     mbedtls_ssl_config_init(&ssl_client->ssl_conf);
     mbedtls_ctr_drbg_init(&ssl_client->drbg_ctx);
 }
 
-int start_ssl_client_2(sslclient_context *ssl_client, const char *host, uint32_t port, int timeout, const char *rootCABuff, bool useRootCABundle, const char *cli_cert, const char *cli_key, const char *pskIdent, const char *psKey, bool insecure, const char **alpn_protos)
+int start_ssl_client_2(sslclient_context_2 *ssl_client, const char *host, uint32_t port, int timeout, const char *rootCABuff, bool useRootCABundle, const char *cli_cert, const char *cli_key, const char *pskIdent, const char *psKey, bool insecure, const char **alpn_protos)
 {
     char buf[512];
     int ret, flags;
@@ -271,7 +271,7 @@ int start_ssl_client_2(sslclient_context *ssl_client, const char *host, uint32_t
 }
 
 
-void stop_ssl_socket_2(sslclient_context *ssl_client, const char *rootCABuff, const char *cli_cert, const char *cli_key)
+void stop_ssl_socket_2(sslclient_context_2 *ssl_client, const char *rootCABuff, const char *cli_cert, const char *cli_key)
 {
     log_v("Cleaning SSL connection.");
 
@@ -293,13 +293,13 @@ void stop_ssl_socket_2(sslclient_context *ssl_client, const char *rootCABuff, co
     // save only interesting field
     int timeout = ssl_client->handshake_timeout;
     // reset embedded pointers to zero
-    memset(ssl_client, 0, sizeof(sslclient_context));
+    memset(ssl_client, 0, sizeof(sslclient_context_2));
     ssl_client->client = nullptr;
     ssl_client->handshake_timeout = timeout;
 }
 
 
-int data_to_read_2(sslclient_context *ssl_client)
+int data_to_read_2(sslclient_context_2 *ssl_client)
 {
     int ret, res;
     ret = mbedtls_ssl_read(&ssl_client->ssl_ctx, NULL, 0);
@@ -313,7 +313,7 @@ int data_to_read_2(sslclient_context *ssl_client)
     return res;
 }
 
-int send_ssl_data_2(sslclient_context *ssl_client, const uint8_t *data, size_t len)
+int send_ssl_data_2(sslclient_context_2 *ssl_client, const uint8_t *data, size_t len)
 {
     log_v("Writing HTTP request with %d bytes...", len); //for low level debug
     int ret = -1;
@@ -330,7 +330,7 @@ int send_ssl_data_2(sslclient_context *ssl_client, const uint8_t *data, size_t l
     return ret;
 }
 
-int get_ssl_receive_2(sslclient_context *ssl_client, uint8_t *data, int length)
+int get_ssl_receive_2(sslclient_context_2 *ssl_client, uint8_t *data, int length)
 {
     //log_d( "Reading HTTP response...");   //for low level debug
     int ret = -1;
@@ -381,7 +381,7 @@ static bool matchName_2(const std::string& name, const std::string& domainName)
 }
 
 // Verifies certificate provided by the peer to match specified SHA256 fingerprint
-bool verify_ssl_fingerprint_2(sslclient_context *ssl_client, const char* fp, const char* domain_name)
+bool verify_ssl_fingerprint_2(sslclient_context_2 *ssl_client, const char* fp, const char* domain_name)
 {
     // Convert hex string to byte array
     uint8_t fingerprint_local[32];
@@ -423,7 +423,7 @@ bool verify_ssl_fingerprint_2(sslclient_context *ssl_client, const char* fp, con
         return true;
 }
 
-bool get_peer_fingerprint_2(sslclient_context *ssl_client, uint8_t sha256[32])
+bool get_peer_fingerprint_2(sslclient_context_2 *ssl_client, uint8_t sha256[32])
 {
     if (!ssl_client) {
         log_d("Invalid ssl_client pointer");
@@ -446,7 +446,7 @@ bool get_peer_fingerprint_2(sslclient_context *ssl_client, uint8_t sha256[32])
 }
 
 // Checks if peer certificate has specified domain in CN or SANs
-bool verify_ssl_dn_2(sslclient_context *ssl_client, const char* domain_name)
+bool verify_ssl_dn_2(sslclient_context_2 *ssl_client, const char* domain_name)
 {
     log_d("domain name: '%s'", (domain_name)?domain_name:"(null)");
     std::string domain_name_str(domain_name);
