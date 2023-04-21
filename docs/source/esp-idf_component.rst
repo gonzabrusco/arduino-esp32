@@ -31,10 +31,9 @@ Installation
     
     mkdir -p components && \
     cd components && \
-    git clone https://github.com/espressif/arduino-esp32.git arduino && \
-    cd arduino && \
+    git submodule add https://github.com/espressif/arduino-esp32.git arduino && \
     git submodule update --init --recursive && \
-    cd ../.. && \
+    cd .. && \
     idf.py menuconfig
 
 .. note:: If you use Arduino with ESP-IDF often, you can place the arduino folder into global components folder.
